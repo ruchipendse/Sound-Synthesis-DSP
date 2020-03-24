@@ -1,2 +1,2 @@
 # Sound-Synthesis-DSP
-A group project concerning synthesis of sound.
+In thisi project, we will be synthesizing sound by using the Karplus Strong algorithm with a simple push-button interface.
