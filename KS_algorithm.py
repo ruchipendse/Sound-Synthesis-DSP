@@ -1,9 +1,10 @@
+# %%
 import numpy as np
 import pyaudio
 import time
 import random
 import wave
-from collections import deque
+from matplotlib import pyplot as plt
 
 # Guitar string frequencies are
 # E2 = 82(.41) Hz,
@@ -20,6 +21,11 @@ string_buffer_sizes = [82, 110, 147, 196, 247, 330]
 sample_width = 2
 channels = 1
 sampling_rate = 44100
+total_samples = 44100
+dampening_factor = 0.995
+
+# show plot of algorithm in action?
+gShowPlot = True
 
 p = pyaudio.PyAudio()  # instantiate PyAudio object
 
@@ -28,9 +34,28 @@ p = pyaudio.PyAudio()  # instantiate PyAudio object
 def generate_note(note):
     frequency = GuitarNotes.get(note)
     N = int(sampling_rate / frequency)
-    ring_buffer = []
-    for string in range(6):
-        ring_buffer.append(
-            np.zeros(string_buffer_sizes[string], dtype=np.float32))
-    ring_buffer[X] = np.random.uniform(
-        1, -1, string_buffer_sizes[string])  # X is supposed to be the array in ring buffer corresponding to the frequency given
+    ring_buffer = np.random.uniform(1, -1, frequency)
+    output = np.zeros(total_samples, dtype=np.float32)
+
+    # plot of flag set
+    if gShowPlot:
+        axline, = plt.plot(ring_buffer)
+
+    for i in range(total_samples):
+        output[i] = ring_buffer[0]
+        average = dampening_factor * 0.5 * (ring_buffer[0] + ring_buffer[1])
+        ring_buffer = np.append(ring_buffer, average)
+        ring_buffer = np.delete(ring_buffer, 0)
+        # plot of flag set
+        if gShowPlot:
+            if i % 1000 == 0:
+                axline.set_ydata(ring_buffer)
+                plt.draw()
+
+    output = np.array(output * 32767, 'int16')
+    return output.tostring()
+
+
+result = generate_note('E2')
+# print(result)
+
