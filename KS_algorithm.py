@@ -24,8 +24,8 @@ sampling_rate = 44100
 total_samples = 44100
 dampening_factor = 0.995
 
-# show plot of algorithm in action?
-gShowPlot = True
+# show plot of algorithm in action
+show_plot = True
 
 p = pyaudio.PyAudio()  # instantiate PyAudio object
 
@@ -34,11 +34,11 @@ p = pyaudio.PyAudio()  # instantiate PyAudio object
 def generate_note(note):
     frequency = GuitarNotes.get(note)
     N = int(sampling_rate / frequency)
-    ring_buffer = np.random.uniform(1, -1, frequency)
-    output = np.zeros(total_samples, dtype=np.float32)
+    ring_buffer = np.random.uniform(0.5, -0.5, frequency)
+    output = np.zeros(65536, dtype=np.float32)
 
     # plot of flag set
-    if gShowPlot:
+    if show_plot:
         axline, = plt.plot(ring_buffer)
 
     for i in range(total_samples):
@@ -47,15 +47,16 @@ def generate_note(note):
         ring_buffer = np.append(ring_buffer, average)
         ring_buffer = np.delete(ring_buffer, 0)
         # plot of flag set
-        if gShowPlot:
-            if i % 1000 == 0:
+        if show_plot:
+            if (49*frequency < i) and (i < 50*frequency):
                 axline.set_ydata(ring_buffer)
                 plt.draw()
+    # output = np.array(output * 32767, 'int16')
 
-    output = np.array(output * 32767, 'int16')
-    return output.tostring()
+    # print(output)
+    return output
+    # .tostring()
 
 
-result = generate_note('E2')
+# result = generate_note('E2')
 # print(result)
-
