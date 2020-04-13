@@ -1,6 +1,9 @@
+# %%
 from fft_function import FFT
 from KS_algorithm import generate_note, write_WAV, playback_WAV
 import tkinter as tk
+from tkinter import font
+from matplotlib import pyplot as plt
 
 '''Guitar string frequencies are
    E2 = 82(.41) Hz,
@@ -45,7 +48,7 @@ def button6():
 
 def exit_app():
     print('Thank you for playing!')
-    exit()
+    root.destroy()
 
 
 def all_buttons():
@@ -54,25 +57,41 @@ def all_buttons():
         playback_WAV(filename)
 
 
+def plot_fft_all():
+    i = 1
+    for key in song:
+        signal = generate_note(key)
+        fft_signal = FFT(signal)
+        plt.figure(i)
+        plt.title(key)
+        i += 1
+        plt.plot(fft_signal)
+        plt.xlabel("n")
+        plt.ylabel("X(n)")
+
+
+plot_fft_all()
+
 root = tk.Tk()
 frame = tk.Frame(root)
 frame.pack()
 
-b1 = tk.Button(frame, text="E2", fg="black", command=button1)
+helv36 = font.Font(family='Helvetica', size=36, weight='bold')
+b1 = tk.Button(frame, text="E2", fg="black", font=helv36, command=button1)
 b1.pack(side=tk.LEFT, padx=10)
-b2 = tk.Button(frame, text="A2", fg="black", command=button2)
+b2 = tk.Button(frame, text="A2", fg="black", font=helv36, command=button2)
 b2.pack(side=tk.LEFT, padx=10)
-b3 = tk.Button(frame, text="D3", fg="black", command=button3)
+b3 = tk.Button(frame, text="D3", fg="black", font=helv36, command=button3)
 b3.pack(side=tk.LEFT, padx=10)
-b4 = tk.Button(frame, text="G3", fg="black", command=button4)
+b4 = tk.Button(frame, text="G3", fg="black", font=helv36, command=button4)
 b4.pack(side=tk.LEFT, padx=10)
-b5 = tk.Button(frame, text="B3", fg="black", command=button5)
+b5 = tk.Button(frame, text="B3", fg="black", font=helv36,  command=button5)
 b5.pack(side=tk.LEFT, padx=10)
-b6 = tk.Button(frame, text="E4", fg="black", command=button6)
+b6 = tk.Button(frame, text="E4", fg="black", font=helv36,  command=button6)
 b6.pack(side=tk.LEFT, padx=10)
-b7 = tk.Button(frame, text="Play all", command=all_buttons)
+b7 = tk.Button(frame, text="Play all", font=helv36,  command=all_buttons)
 b7.pack(side=tk.LEFT, padx=10)
-b8 = tk.Button(frame, text="Exit", fg="black", command=exit_app)
+b8 = tk.Button(frame, text="Exit", fg="black", font=helv36,  command=exit_app)
 b8.pack(side=tk.LEFT, padx=10)
 
 
