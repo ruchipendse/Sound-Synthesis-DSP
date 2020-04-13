@@ -1,41 +1,26 @@
-# %%
 import numpy as np
-import pyaudio
 import simpleaudio as sa
-import time
-import random
 import wave
 from matplotlib import pyplot as plt
 
-# Guitar string frequencies are
-# E2 = 82(.41) Hz,
-# A2 = 110 Hz,
-# D3 = 147 (146.8) Hz,
-# G3 = 196 Hz,
-# B3 = 247 (246.9) Hz, and
-# E4 = 330 (329.6) Hz.
 
 GuitarNotes = {'E2': 82, 'A2': 110, 'D3': 147, 'G3': 196, 'B3': 247, 'E4': 330}
-# array containing buffer lengths for each frequency-
-string_buffer_sizes = [82, 110, 147, 196, 247, 330]
-
 sample_width = 2
 channels = 1
 sampling_rate = 44100
 total_samples = 44100
-dampening_factor = 0.998
+dampening_factor = 0.995
 
 # show plot of algorithm in action
-show_plot = True
+show_plot = False
 
 # note must be a string object e.g. generate_note('E2') or >>>note = 'E2' >>>generate_note
 
 
 def generate_note(note):
     frequency = GuitarNotes.get(note)
-    N = int(sampling_rate / frequency)
-    ring_buffer = np.random.uniform(0.5, -0.5, frequency)
-    output = np.zeros(65536, dtype=np.float32)
+    ring_buffer = np.random.uniform(1, -1, frequency)
+    output = np.zeros(total_samples, dtype='float32')
 
     # plot of flag set
     if show_plot:
@@ -55,11 +40,30 @@ def generate_note(note):
     return output
 
 
-def playback_WAV(sequence):
-    # Convert numpy array to byte stream for PyAudio, and scale to a int16 value
-    sequence = np.array(sequence * 32767, 'int16')
+# Write WAV file for audio
+def write_WAV(filename, data):
+    # Add appropriate extension to filename
+    filename = filename + '.wav'
 
-    # WavObj = sa.WaveObject(sequence, 1, 1, sampling_rate)  # instantiate WaveObject
+    # Open file in write mode
+    file = wave.open(filename, 'wb')
+
+    # Set file parameters
+    file.setparams((channels, sample_width, sampling_rate,
+                    total_samples, 'NONE', 'noncompressed'))
+
+    # Convert data to string and enter into file
+    data = np.array(data * 32767, 'int16')
+    file.writeframes(data.tostring())
+    # Close file
+    file.close()
+
+# Function to play NUMPY ARRAY
+
+
+def playback_array(sequence):
+    # Convert numpy array to byte stream for PyAudio, and scale to a int16 value
+    sequence = np.array(sequence * 32767, 'int16')   # 32767 = (2^15) - 1
 
     # Start Playback
     # play_buffer((audio_data, num_channels, bytes_per_sample, sample_rate))
@@ -69,10 +73,9 @@ def playback_WAV(sequence):
     play_obj.wait_done()
 
 
-# MAIN
-for key in GuitarNotes.keys():
-    result = generate_note(key)
-    playback_WAV(result)
-# print(result)
-
-# %%
+# Function to play WAV file from Folder
+def playback_WAV(fname):
+    path = "D:/CCOEW/TY [SEM 2]/DSP/DSP Project/Sound-Synthesis-DSP/" + fname
+    wave_obj = sa.WaveObject.from_wave_file(path)
+    play_obj = wave_obj.play()
+    # play_obj.wait_done()
