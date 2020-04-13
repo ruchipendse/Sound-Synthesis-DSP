@@ -1,7 +1,9 @@
+# %%
 import numpy as np
 import simpleaudio as sa
 import wave
 from matplotlib import pyplot as plt
+from fft_function import FFT
 
 
 GuitarNotes = {'E2': 82, 'A2': 110, 'D3': 147, 'G3': 196, 'B3': 247, 'E4': 330}
@@ -75,7 +77,7 @@ def playback_array(sequence):
 
 # Function to play WAV file from Folder
 def playback_WAV(fname):
-    path = "****" + fname # ENTER PATH FOR AUDIO FILES INSIDE DOUBLE QUOTES
+    path = "D:/CCOEW/TY [SEM 2]/DSP/DSP Project/Sound-Synthesis-DSP/" + fname
     wave_obj = sa.WaveObject.from_wave_file(path)
     play_obj = wave_obj.play()
     # play_obj.wait_done()
