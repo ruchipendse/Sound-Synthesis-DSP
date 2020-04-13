@@ -75,7 +75,7 @@ def playback_array(sequence):
 
 # Function to play WAV file from Folder
 def playback_WAV(fname):
-    path = "D:/CCOEW/TY [SEM 2]/DSP/DSP Project/Sound-Synthesis-DSP/" + fname
+    path = "****" + fname # ENTER PATH FOR AUDIO FILES INSIDE DOUBLE QUOTES
     wave_obj = sa.WaveObject.from_wave_file(path)
     play_obj = wave_obj.play()
     # play_obj.wait_done()
